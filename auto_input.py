@@ -38,7 +38,7 @@ import re
 import CheckRegister as ckr
 import CheckUpdate as cku
 
-Version = "2.06"
+Version = "2.1"
 Software_Name = "ae"
 
 m = PyMouse()
@@ -590,7 +590,7 @@ def Check_System_Info(screen_width, screen_height):
 
         return {"geometry": '352x77+' + '%s+%s' % (screen_width, screen_height),
                 "maxsize-x": 352,
-                "maxsize-y": 99,
+                "maxsize-y": 101,
                 "textwidth": 50,
                 "buttonwidth": 43,
                 "height": 2,
@@ -668,7 +668,7 @@ def loadview():
         column=1, row=1, sticky=W)
     textbox1 = Entry(root, font='微软雅黑 -11', bg='darkgray', width=textwidth, state='readonly', textvariable=v1, justify=LEFT).grid(
         column=2, row=1, sticky=N + S + E + W, columnspan=6)
-    button1 = Button(root, text="✚", width=4, height=height, command=lambda: get_path(
+    button1 = Button(root, text="✚", width=6, height=height, command=lambda: get_path(
         v1)).grid(column=7, row=1, sticky=W, rowspan=2)
 
     v2 = StringVar()
@@ -706,10 +706,14 @@ def loadview():
                                   sticky=N + S + E + W,
                                   columnspan=7)
 
+    Button(root, text="检查更新", font='微软雅黑 -8', width=6, command=lambda:Add_Thread(cku.check_update("130.130.200.30",
+                                        Software_Name, Version, download_windows, DownLoad))).grid(
+        column=7, row=6, sticky=N, columnspan=1)
+
+
     Add_thread(lambda: Check_registration_Status_label(
         "http://130.130.200.49", "input-registrationcode.ini", b"0000000000000000"))
-    Add_Thread(lambda: cku.check_update("130.130.200.30",
-                                        Software_Name, Version, download_windows, DownLoad))
+
     root.mainloop()
 
 

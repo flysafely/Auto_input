@@ -16,9 +16,10 @@ import time
 import win32api,win32con 
 import winshell
 import zipfile
-global cookies,GET_MAIL_HEADER
 import subprocess
+import webbrowser
 
+global cookies,GET_MAIL_HEADER
 Name_Mapping = {
     "sm":"空间管理",
     "ae":"费用录入"
@@ -103,7 +104,8 @@ def open_url_without_cookie(website,name,version):
     except urllib.error.HTTPError as err:
         print(err.msg)
         time.sleep(1)
-        open_url_without_cookie(website)
+        tkinter.messagebox.showinfo("警告！","连接更新服务器错误！请确认‘强制登录’后重试！")
+        refrushlogin()
     else:
         download_page_id=[]
         software_name=[]
@@ -130,6 +132,7 @@ def get_download_file_with_login(website):
     try:
         req = urllib.request.Request(website,headers=GET_MAIL_HEADER)
         html = urllib.request.urlopen(req)
+        print(html)
     except urllib.error.HTTPError as err:
         print(err.msg)
         time.sleep(1)
@@ -210,7 +213,7 @@ def Create_Shortcut(name, version, Choosed_dir):
 
 def check_update(host, name, version, progress, callbackfunc):
     pythoncom.CoInitialize()
-    if subprocess.call('ping ' + host + ' -w 100', shell=True) == 0:    
+    if subprocess.call('ping 130.130.200.30 -w 100', shell=True) == 0:    
         get_login_cookie("http://"+host+"/loginA.aspx?login=xafei&pass=111")
         version_info = open_url_without_cookie("http://"+host+"/applications/email/mailreceive.aspx",name,version)
         if version_info != 0:
@@ -222,16 +225,18 @@ def check_update(host, name, version, progress, callbackfunc):
                 else:
                     pass
         else:
-            return 0 
+            tkinter.messagebox.showinfo("提示！","%s版本已经是最新版！" % version)
     else:
-        print ('Connection failed')
-        return 0 
+        tkinter.messagebox.showinfo("提示！","未能连接更新服务器！")
 
 def get_desktop(): #获取桌面路径 最后没有/
     key =win32api.RegOpenKey(win32con.HKEY_CURRENT_USER,r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders',0,win32con.KEY_READ)  
     return win32api.RegQueryValueEx(key,'Desktop')[0]  
 
+def refrushlogin():
+    webbrowser.open_new("http://130.130.200.30/loginA.aspx?login=xafei&pass=111")
 
 if __name__ == '__main__':
 
+    #check_update("130.130.200.30", "sm", "2.04", None, None)
     pass

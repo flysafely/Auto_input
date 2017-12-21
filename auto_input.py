@@ -21,6 +21,7 @@ import win32gui
 import win32api
 import win32con
 import win32process
+
 import tkinter
 import time
 import ctypes
@@ -36,9 +37,9 @@ import uuid
 import urllib.request
 import re
 import CheckRegister as ckr
-import CheckUpdate as cku
+#import CheckUpdate as cku
 
-Version = "2.1"
+Version = "3.0"
 Software_Name = "ae"
 
 m = PyMouse()
@@ -131,7 +132,6 @@ def setAppWindowForeground(Appname, windowsize=3):  # 让特定程序获得焦�
 def ensure_App_Foreground(appname, windowsize=3):
     if win32gui.FindWindow(0, appname) != win32gui.GetForegroundWindow():
         setAppWindowForeground(appname, windowsize)
-
 
 def ensure_CapsLock():
     global hllDll, VK_CAPITAL, isContinue
@@ -617,15 +617,14 @@ def Refresh_Status_label(info):
 def loadview():
     global hllDll, VK_CAPITAL, Status_label, ProgressValue, download_ProgressValue
     root = tkinter.Tk()
-    root.title('费用录入工具-version:%s' % Version)
+    root.title('费用录入-v%s' % Version)
     ico = os.getcwd() + r'\ae.ico'
     root.iconbitmap(ico)
     #root.attributes("-alpha", 0.1)
     screen_width = root.winfo_screenwidth() // 2 - 187
     screen_height = root.winfo_screenheight() // 2 - 260
 
-    windows_params = Check_System_Info(
-        root.winfo_screenwidth() // 2 - 187, root.winfo_screenheight() // 2 - 260)
+    windows_params = Check_System_Info(root.winfo_screenwidth() // 2 - 187, root.winfo_screenheight() // 2 - 260)
     root.geometry(windows_params["geometry"])
     root.maxsize(windows_params["maxsize-x"], windows_params["maxsize-y"])
     root.minsize(windows_params["maxsize-x"], windows_params["maxsize-y"])
@@ -644,21 +643,6 @@ def loadview():
     topLabel = Label(pay_windows, image=tkimg)
     topLabel.pack()
     pay_windows.withdraw()
-
-    # 更新下载安装进度 #
-    download_windows = Toplevel()
-    download_windows.title("进度...")
-    download_windows.iconbitmap(ico)
-    download_ProgressValue = DoubleVar()
-    download_ProgressValue.set(0.0)
-    ttk.Progressbar(download_windows, orient="horizontal",
-                    length=352,
-                    mode="determinate",
-                    variable=download_ProgressValue).grid(column=1,
-                                                          row=1,
-                                                          sticky=W,
-                                                          columnspan=1)
-    download_windows.withdraw()
 
     ######################################################
 
@@ -706,8 +690,7 @@ def loadview():
                                   sticky=N + S + E + W,
                                   columnspan=7)
 
-    Button(root, text="检查更新", font='微软雅黑 -8', width=6, command=lambda:Add_Thread(cku.check_update("130.130.200.30",
-                                        Software_Name, Version, download_windows, DownLoad))).grid(
+    Button(root, text="检查更新", font='微软雅黑 -8', width=6, command=lambda:Update_Info_Write()).grid(
         column=7, row=6, sticky=N, columnspan=1)
 
 
@@ -715,6 +698,18 @@ def loadview():
         "http://130.130.200.49", "input-registrationcode.ini", b"0000000000000000"))
 
     root.mainloop()
+
+def Update_Info_Write():
+    file_open = open(r'C:\UpdateInfo.ini','w+')
+    current_path = os.getcwd()
+    file_open.write(current_path + '-' + Software_Name + '-' + Version)
+    file_open.close()
+    try:
+        win32api.ShellExecute(0, 'open', os.getcwd() + r'\Update\CheckUpdate.exe', '','',1)
+        tkinter.messagebox.showinfo('提示！','正在打开更新程序......')
+    except Exception as e:
+        tkinter.messagebox.showinfo('警告！','未找到更新程序！' + str(e))
+
 
 
 def Check_registration_Status_label(ip, filename, keyvalue):
@@ -732,3 +727,4 @@ def Check_registration_Status_label(ip, filename, keyvalue):
 
 if __name__ == '__main__':
     loadview()
+

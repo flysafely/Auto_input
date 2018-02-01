@@ -39,7 +39,7 @@ import re
 import CheckRegister as ckr
 #import CheckUpdate as cku
 
-Version = "3.0"
+Version = "4.0"
 Software_Name = "ae"
 
 m = PyMouse()
@@ -644,6 +644,26 @@ def loadview():
     topLabel.pack()
     pay_windows.withdraw()
 
+    ###################验证码输入######################
+
+    input_window = Toplevel()
+    input_window.title("输入验证码")
+    input_window.geometry("282x24+%s+%s" % (input_window.winfo_screenwidth() // 2 - 140, input_window.winfo_screenheight() // 2 - 200))
+    input_StrVar = StringVar()
+    Entry(input_window, font='微软雅黑 -10',
+                  width=38,
+                  textvariable=input_StrVar,
+                  justify=LEFT).grid(column=1,
+                                     row=1,
+                                     sticky=N + S + E + W)
+    Button(input_window, text="验证",
+       width=7,
+       font='微软雅黑 -9 bold',
+       command = lambda:Check_registration_Status_label("http://130.130.200.49", "sm", input_StrVar.get(), input_window, "input-registrationcode.ini",b"0000000000000000")).grid(column=2,
+                            row=1,
+                            sticky=W)
+    input_window.withdraw()
+
     ######################################################
 
     v1 = StringVar()
@@ -693,9 +713,7 @@ def loadview():
     Button(root, text="检查更新", font='微软雅黑 -8', width=6, command=lambda:Update_Info_Write()).grid(
         column=7, row=6, sticky=N, columnspan=1)
 
-
-    Add_thread(lambda: Check_registration_Status_label(
-        "http://130.130.200.49", "input-registrationcode.ini", b"0000000000000000"))
+    Add_thread(lambda:Check_registration_Status_label("http://130.130.200.49", "ae", None, input_window, "input-registrationcode.ini",b"0000000000000000"))
 
     root.mainloop()
 
@@ -710,11 +728,9 @@ def Update_Info_Write():
     except Exception as e:
         tkinter.messagebox.showinfo('警告！','未找到更新程序！' + str(e))
 
-
-
-def Check_registration_Status_label(ip, filename, keyvalue):
+def Check_registration_Status_label(ip, appname, Md5, inputview, filename, keyvalue):
     global isRegistered, UserName, Company, Department
-    Registration = ckr.registration_check(ip, filename, keyvalue)
+    Registration = ckr.registration_check(ip, appname, Md5, inputview, filename, keyvalue)
     if Registration[0]:
         isRegistered = True
         UserName = Registration[1]["UserName"]

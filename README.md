@@ -1,8 +1,11 @@
 # Auto_input（自动费用录入）
 为公司定制费用录入自动工具
 基于Python3.5.3
+
 ps:杀毒软件会误报木马,原因是程序中用到了win32com接口和pyuserinput需要模拟键盘操作的库
+
 >[演示视频(中文配音)](http://v.youku.com/v_show/id_XMzI0ODQ2NDQ0NA==.html?spm=a2h3j.8428770.3416059.1)
+
 ![image](https://github.com/flysafely/Auto_input/blob/master/ep.jpg)
 
 更新日志
